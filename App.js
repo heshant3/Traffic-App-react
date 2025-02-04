@@ -32,7 +32,7 @@ function MainTabNavigator() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "tomato",
+        tabBarActiveTintColor: "#3C80FF",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: {
           backgroundColor: "#f8f8f8",

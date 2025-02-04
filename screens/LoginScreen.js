@@ -39,9 +39,7 @@ export default function LoginScreen({ navigation }) {
 
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
-        Alert.alert("Success", `Welcome back, ${userData.name}!`);
       } else {
-        console.error("User document does not exist in Firestore.");
         Alert.alert("Error", "User data not found.");
       }
 

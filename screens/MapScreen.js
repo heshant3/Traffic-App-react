@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
+  alert,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
@@ -87,7 +88,7 @@ const MapScreen = ({ route }) => {
         setDirections(points);
       }
     } catch (error) {
-      console.error("Error fetching directions:", error);
+      alert.error("Error fetching directions:", error);
     }
   };
 
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   directionButton: {
-    backgroundColor: "green",
+    backgroundColor: "#3C80FF",
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 25,
