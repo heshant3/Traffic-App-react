@@ -21,6 +21,12 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "package": "com.trafiic.Itracker",
+    "config": {
+      "googleMaps": {
+        "apiKey": "Your_API_KEY"
+      }
+    },
     "web": {
       "favicon": "./assets/favicon.png"
     }
