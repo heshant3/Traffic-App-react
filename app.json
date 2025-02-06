@@ -24,7 +24,7 @@
     "package": "com.trafiic.Itracker",
     "config": {
       "googleMaps": {
-        "apiKey": "Your_API_KEY"
+        "apiKey": "AIzaSyBmayTJP8fXnkAiZdyCjV3kvPqiT3_T0_M"
       }
     },
     "web": {
