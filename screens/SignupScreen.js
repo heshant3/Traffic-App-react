@@ -7,9 +7,8 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { auth, db } from "../components/firebase"; // Updated imports
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore"; // Updated import for setDoc
+import { db } from "../components/firebase"; // Updated import
+import { ref, set, push } from "firebase/database"; // Import methods for Realtime Database
 
 export default function SignupScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -38,19 +37,13 @@ export default function SignupScreen({ navigation }) {
     setIsLoading(true);
 
     try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      // Add additional user details to Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
+      // Push user data to Realtime Database
+      const usersRef = ref(db, "users"); // Reference to the "users" node
+      const newUserRef = push(usersRef); // Create a unique ID for the new user
+      await set(newUserRef, {
         name,
         email,
+        password,
       });
 
       Alert.alert("Success", "Account created successfully!");

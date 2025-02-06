@@ -4,56 +4,97 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  Button,
   Alert,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
-import { auth, db } from "../components/firebase"; // Import Firebase auth and db
-import { doc, getDoc } from "firebase/firestore";
-import { FontAwesome } from "react-native-vector-icons";
+import { db } from "../components/firebase"; // Import Firebase db
+import { ref, get, update } from "firebase/database"; // Firebase Realtime Database imports
+import {
+  FontAwesome,
+  AntDesign,
+  MaterialIcons,
+} from "react-native-vector-icons"; // Added MaterialIcons
 
-const UserScreen = ({ navigation }) => {
+const UserScreen = ({ route, navigation }) => {
+  const { userId } = route.params;
   const [userData, setUserData] = useState(null); // State to store user data
   const [loading, setLoading] = useState(true); // State to track loading status
   const [error, setError] = useState(null); // State to handle errors
+  const [isEditing, setIsEditing] = useState({ name: false, email: false }); // State to track editing
+  const [editedName, setEditedName] = useState(""); // State for edited name
+  const [editedEmail, setEditedEmail] = useState(""); // State for edited email
+  const [editedPassword, setEditedPassword] = useState(""); // State for edited email
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const user = auth.currentUser; // Get the currently logged-in user
-      if (user) {
+      if (userId) {
         try {
-          const userDocRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
-          const userDocSnap = await getDoc(userDocRef);
+          const userRef = ref(db, "users/" + userId);
+          const snapshot = await get(userRef);
 
-          if (userDocSnap.exists()) {
-            setUserData(userDocSnap.data()); // Set user data if the document exists
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            setUserData(data);
           } else {
-            console.log("No such document!"); // Log if the document does not exist
-            setError("User data not found."); // Set an error message for the UI
+            setError("User data not found.");
           }
         } catch (err) {
-          console.error("Error fetching user data:", err); // Log any errors
-          setError("Failed to fetch user data."); // Set an error message for the UI
+          setError("Failed to fetch user data.");
         } finally {
-          setLoading(false); // Stop loading regardless of success or failure
+          setLoading(false);
         }
       } else {
-        setError("No user is currently logged in."); // Handle case where no user is logged in
+        setError("No user ID provided.");
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [userId]);
 
   const handleLogout = async () => {
     try {
-      await auth.signOut(); // Firebase sign out
       Alert.alert("Success", "You have been logged out.");
       navigation.replace("Login"); // Redirect to login screen
     } catch (err) {
-      console.error("Error logging out:", err);
       Alert.alert("Error", "Failed to log out. Please try again.");
     }
+  };
+
+  const handleSave = async (field) => {
+    try {
+      const userRef = ref(db, "users/" + userId); // Realtime Database reference
+
+      if (field === "name") {
+        await update(userRef, { name: editedName });
+        setUserData((prev) => ({ ...prev, name: editedName }));
+      } else if (field === "email") {
+        await update(userRef, { email: editedEmail });
+        setUserData((prev) => ({ ...prev, email: editedEmail }));
+      } else if (field === "password") {
+        await update(userRef, { password: editedPassword });
+        setUserData((prev) => ({ ...prev, password: editedPassword }));
+      }
+
+      setIsEditing((prev) => ({ ...prev, [field]: false }));
+    } catch (err) {
+      Alert.alert("Error", `Failed to update ${field}. Please try again.`, [
+        { text: "OK", onPress: () => console.error(err) },
+      ]);
+    }
+  };
+
+  const handleCancel = (field) => {
+    if (field === "name") {
+      setEditedName(userData.name); // Reset to original name
+    } else if (field === "email") {
+      setEditedPassword(userData.email); // Reset to original email
+    } else if (field === "password") {
+      setEditedPassword(userData.password); // Reset to original email
+    }
+
+    setIsEditing((prev) => ({ ...prev, [field]: false }));
   };
 
   if (loading) {
@@ -67,18 +108,127 @@ const UserScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <FontAwesome name="user-circle" size={100} color="#888" />
+      <View style={styles.ImageContainer}>
+        <FontAwesome name="user-circle" size={100} color="#888" />
+      </View>
       {userData ? (
         <View style={styles.profileContainer}>
           <View style={styles.textContainer}>
-            <Text style={styles.text}>Name: {userData.name}</Text>
-            <Text style={styles.text}>Email: {userData.email}</Text>
+            <View style={styles.editableRow}>
+              {isEditing.name ? (
+                <>
+                  <TextInput
+                    style={styles.input}
+                    value={editedName}
+                    onChangeText={setEditedName}
+                  />
+                  <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => handleSave("name")}
+                  >
+                    <AntDesign name="save" size={24} color="#007AFF" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => handleCancel("name")}
+                  >
+                    <MaterialIcons name="edit-off" size={24} color="#ff0000" />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.text}>Name: {userData.name}</Text>
+                  <AntDesign
+                    name="edit"
+                    size={24}
+                    color="#007AFF"
+                    onPress={() =>
+                      setIsEditing((prev) => ({ ...prev, name: true }))
+                    }
+                  />
+                </>
+              )}
+            </View>
+
+            <View style={styles.editableRow}>
+              {isEditing.email ? (
+                <>
+                  <TextInput
+                    style={styles.input}
+                    value={editedEmail}
+                    onChangeText={setEditedEmail}
+                  />
+                  <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => handleSave("email")}
+                  >
+                    <AntDesign name="save" size={24} color="#007AFF" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => handleCancel("email")}
+                  >
+                    <MaterialIcons name="edit-off" size={24} color="#ff0000" />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.text}>Email: {userData.email}</Text>
+                  <AntDesign
+                    name="edit"
+                    size={24}
+                    color="#007AFF"
+                    onPress={() =>
+                      setIsEditing((prev) => ({ ...prev, email: true }))
+                    }
+                  />
+                </>
+              )}
+            </View>
+
+            <View style={styles.editableRow}>
+              {isEditing.password ? (
+                <>
+                  <TextInput
+                    style={styles.input}
+                    value={editedPassword}
+                    onChangeText={setEditedPassword}
+                  />
+                  <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => handleSave("password")}
+                  >
+                    <AntDesign name="save" size={24} color="#007AFF" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => handleCancel("password")}
+                  >
+                    <MaterialIcons name="edit-off" size={24} color="#ff0000" />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.text}>Password: {userData.password}</Text>
+                  <AntDesign
+                    name="edit"
+                    size={24}
+                    color="#007AFF"
+                    onPress={() =>
+                      setIsEditing((prev) => ({ ...prev, password: true }))
+                    }
+                  />
+                </>
+              )}
+            </View>
           </View>
         </View>
       ) : (
         <Text>No user data available.</Text>
       )}
-      <Button title="Logout" color="#007AFF" onPress={handleLogout} />
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -91,6 +241,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 50,
   },
+  ImageContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+    marginTop: 20,
+  },
   profileContainer: {
     flexDirection: "column",
     alignItems: "center",
@@ -102,23 +257,39 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginTop: 40,
   },
-  title: {
-    fontSize: 30,
-    marginBottom: 20,
-    fontWeight: "bold",
-    color: "#333",
-    alignSelf: "center",
-    marginBottom: 30,
+  editableRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 50,
   },
   text: {
     fontSize: 22,
-    marginBottom: 20,
     color: "#555",
   },
-  errorText: {
-    fontSize: 18,
-    color: "red",
-    marginBottom: 10,
+  input: {
+    fontSize: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    flex: 1,
+    marginRight: 10,
+  },
+  Button: {
+    marginLeft: 30,
+  },
+  logoutButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 10,
+    paddingHorizontal: 50,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
   },
 });
 

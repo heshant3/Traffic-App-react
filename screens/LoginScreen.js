@@ -7,9 +7,8 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../components/firebase"; // Import Firestore
+import { db } from "../components/firebase"; // Import Realtime Database
+import { ref, get } from "firebase/database"; // Methods for Realtime Database
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -23,33 +22,41 @@ export default function LoginScreen({ navigation }) {
     }
 
     setIsLoading(true);
-    const auth = getAuth();
+
     try {
-      // Sign in the user
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+      // Reference to the users data in Realtime Database
+      const usersRef = ref(db, "users");
 
-      // Fetch user details from Firestore
-      const userDocRef = doc(db, "users", user.uid); // Reference to the user's document
-      const userDocSnap = await getDoc(userDocRef);
+      // Get all users and check if the email and password match
+      const snapshot = await get(usersRef);
 
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
+      if (snapshot.exists()) {
+        const usersData = snapshot.val();
+        let userFound = false;
+        let userId = null;
+
+        // Loop through the users and check for email and password match
+        for (const id in usersData) {
+          const user = usersData[id];
+
+          if (user.email === email && user.password === password) {
+            userFound = true;
+            userId = id;
+            break;
+          }
+        }
+
+        if (userFound) {
+          Alert.alert("Success", "Login successful!");
+          navigation.navigate("Main", { screen: "User", params: { userId } }); // Navigate to User screen with userId
+        } else {
+          Alert.alert("Error", "Invalid email or password.");
+        }
       } else {
-        Alert.alert("Error", "User data not found.");
+        Alert.alert("Error", "No users found.");
       }
-
-      navigation.navigate("Main"); // Navigate to the home screen
     } catch (error) {
-      if (error.code === "auth/invalid-credential") {
-        Alert.alert("Error", "Invalid credentials. Please try again.");
-      } else {
-        Alert.alert("Error", error.message); // Display other errors
-      }
+      Alert.alert("Error", error.message); // Display other errors
     } finally {
       setIsLoading(false);
     }
