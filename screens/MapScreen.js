@@ -21,7 +21,7 @@ const MapScreen = ({ route }) => {
   const mapRef = useRef(null);
   const inputRef = useRef(null);
 
-  const GOOGLE_API_KEY = " AIzaSyBmayTJP8fXnkAiZdyCjV3kvPqiT3_T0_M";
+  const GOOGLE_API_KEY = "AIzaSyBmayTJP8fXnkAiZdyCjV3kvPqiT3_T0_M";
 
   useEffect(() => {
     if (!location) {
