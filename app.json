@@ -16,19 +16,19 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.yourname.myapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
-    "package": "com.trafiic.Itracker",
-    "config": {
-      "googleMaps": {
-        "apiKey": "AIzaSyBmayTJP8fXnkAiZdyCjV3kvPqiT3_T0_M"
-      }
-    },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d65bde3c-a43d-4f72-8f14-8004e9e12eb1"
+      }
     }
   }
 }

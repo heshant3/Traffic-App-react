@@ -11,7 +11,6 @@ import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Ionicons, MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
-import { GOOGLE_API_KEY } from "@env";
 
 const MapScreen = ({ route }) => {
   const [location, setLocation] = useState(route.params?.location || null);
@@ -21,6 +20,8 @@ const MapScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const mapRef = useRef(null);
   const inputRef = useRef(null);
+
+  const GOOGLE_API_KEY = " AIzaSyBmayTJP8fXnkAiZdyCjV3kvPqiT3_T0_M";
 
   useEffect(() => {
     if (!location) {
