@@ -268,79 +268,84 @@ export default function ForecastScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Accident Forecast</Text>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search Police Area"
-        value={searchText}
-        onChangeText={handleSearch}
-      />
-      {filteredAreas.length > 0 && (
-        <View style={styles.dropdown}>
-          {filteredAreas.map((area) => (
-            <TouchableOpacity
-              key={area.area}
-              style={styles.dropdownItem}
-              onPress={() => handleSelectArea(area)}
-            >
-              <Text>{area.area}</Text>
-            </TouchableOpacity>
-          ))}
+      <View style={styles.header}>
+        <View style={styles.iconBackground}>
+          <Text style={styles.iconText}>📊</Text>
         </View>
-      )}
-      <Picker
-        selectedValue={selectedYear}
-        style={styles.picker}
-        onValueChange={(itemValue) => setSelectedYear(itemValue)}
-      >
-        <Picker.Item label="2013" value="2013" />
-        <Picker.Item label="2014" value="2014" />
-        <Picker.Item label="2015" value="2015" />
-        <Picker.Item label="2016" value="2016" />
-        <Picker.Item label="2017" value="2017" />
-        <Picker.Item label="2018" value="2018" />
-        <Picker.Item label="2019" value="2019" />
-      </Picker>
-      {selectedArea && (
-        <>
-          <Text style={styles.selectedCity}>
-            Selected City: {selectedArea.area}
-          </Text>
-          <PieChart
-            data={chartData}
-            width={screenWidth - 32}
-            height={220}
-            chartConfig={{
-              backgroundColor: "#fff",
-              backgroundGradientFrom: "#fff",
-              backgroundGradientTo: "#fff",
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            }}
-            accessor={"population"}
-            backgroundColor={"transparent"}
-            paddingLeft={"15"}
-            center={[10, 0]}
-            absolute
-          />
-          {indicator && (
-            <View style={styles.horizontalBar}>
-              <Text style={styles.averageText}>
-                Average accident in this area -
-              </Text>
-              <View
-                style={[
-                  styles.barSegment,
-                  {
-                    backgroundColor: indicator.color,
-                  },
-                ]}
+        <Text style={styles.headerTitle}>Accident Forecast</Text>
+      </View>
+      <View style={styles.content}>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search Police Area"
+          value={searchText}
+          onChangeText={handleSearch}
+        />
+        {filteredAreas.length > 0 && (
+          <View style={styles.dropdown}>
+            {filteredAreas.map((area) => (
+              <TouchableOpacity
+                key={area.area}
+                style={styles.dropdownItem}
+                onPress={() => handleSelectArea(area)}
               >
-                <Text style={styles.barValue}>{indicator.label}</Text>
+                <Text>{area.area}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+        <Picker
+          selectedValue={selectedYear}
+          style={styles.picker}
+          onValueChange={(itemValue) => setSelectedYear(itemValue)}
+        >
+          <Picker.Item label="2013" value="2013" />
+          <Picker.Item label="2014" value="2014" />
+          <Picker.Item label="2015" value="2015" />
+          <Picker.Item label="2016" value="2016" />
+          <Picker.Item label="2017" value="2017" />
+          <Picker.Item label="2018" value="2018" />
+          <Picker.Item label="2019" value="2019" />
+        </Picker>
+        {selectedArea && (
+          <>
+            <Text style={styles.selectedCity}>
+              Selected City: {selectedArea.area}
+            </Text>
+            <PieChart
+              data={chartData}
+              width={screenWidth - 32}
+              height={220}
+              chartConfig={{
+                backgroundColor: "#fff",
+                backgroundGradientFrom: "#fff",
+                backgroundGradientTo: "#fff",
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              }}
+              accessor={"population"}
+              backgroundColor={"transparent"}
+              paddingLeft={"15"}
+              center={[10, 0]}
+              absolute
+            />
+            {indicator && (
+              <View style={styles.indicatorContainer}>
+                <Text style={styles.indicatorText}>
+                  Average accident in this area:
+                </Text>
+                <View
+                  style={[
+                    styles.indicatorBox,
+                    { backgroundColor: indicator.color },
+                  ]}
+                >
+                  <Text style={styles.indicatorValue}>{indicator.label}</Text>
+                </View>
               </View>
-            </View>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
+      </View>
     </View>
   );
 }
@@ -348,14 +353,41 @@ export default function ForecastScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#007AFF",
+    alignItems: "center",
+    paddingTop: 50,
   },
-  title: {
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  iconBackground: {
+    width: 70,
+    height: 70,
+    backgroundColor: "#ffffff5f",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  iconText: {
+    fontSize: 30,
+  },
+  headerTitle: {
     fontSize: 24,
+    color: "#fff",
     fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
+  },
+  content: {
+    backgroundColor: "#fff",
+    width: "95%",
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   searchBar: {
     height: 40,
@@ -363,62 +395,53 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
-    marginBottom: 8,
+    marginBottom: 10,
+    backgroundColor: "#F9F9F9",
   },
   dropdown: {
     backgroundColor: "#f9f9f9",
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   dropdownItem: {
-    padding: 8,
+    padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
   picker: {
     height: 50,
     width: "100%",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   selectedCity: {
-    fontSize: 21,
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
-
-    marginBottom: 56,
+    marginBottom: 20,
+    color: "#333",
   },
-  horizontalBar: {
+  indicatorContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 46,
-    height: 40,
+    marginTop: 20,
+    padding: 10,
     borderRadius: 8,
-    overflow: "hidden",
-    paddingHorizontal: 8,
+    backgroundColor: "#f9f9f9",
   },
-  barSegment: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    width: 100,
-    borderRadius: 8, // Added border radius for curve
+  indicatorText: {
+    fontSize: 16,
+    color: "#333",
   },
-  barLabel: {
+  indicatorBox: {
+    padding: 10,
+    borderRadius: 8,
+  },
+  indicatorValue: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
-  },
-  barValue: {
-    fontSize: 21,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  averageText: {
-    fontSize: 21,
-    fontWeight: "bold",
-    color: "#333",
   },
 });

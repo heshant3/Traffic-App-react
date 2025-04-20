@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome"; // Import Icon from react-native-vector-icons
 import { db } from "../components/firebase"; // Updated import
 import { ref, set, push } from "firebase/database"; // Import methods for Realtime Database
 
@@ -57,47 +58,55 @@ export default function SignupScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <TextInput
-        placeholder="Name"
-        style={styles.input}
-        value={name}
-        onChangeText={(text) => setName(text)}
-      />
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        secureTextEntry
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
-      <TextInput
-        placeholder="Re-Password"
-        style={styles.input}
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={(text) => setConfirmPassword(text)}
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignup}
-        disabled={isLoading}
-      >
-        <Text style={styles.buttonText}>
-          {isLoading ? "Signing Up..." : "Sign Up"}
-        </Text>
-      </TouchableOpacity>
-      <View style={styles.signup}>
-        <Text>Already have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.linkText}> Login</Text>
+      <View style={styles.header}>
+        <View style={styles.iconBackground}>
+          <Icon name="car" size={30} color="#ffffff" />
+        </View>
+        <Text style={styles.headerTitle}>Traffic Monitor</Text>
+      </View>
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Create Account</Text>
+        <TextInput
+          placeholder="Full Name"
+          style={styles.input}
+          value={name}
+          onChangeText={(text) => setName(text)}
+        />
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInput
+          placeholder="Password"
+          style={styles.input}
+          secureTextEntry
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          style={styles.input}
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={(text) => setConfirmPassword(text)}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSignup}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>
+            {isLoading ? "Signing Up..." : "Sign Up"}
+          </Text>
         </TouchableOpacity>
+        <View style={styles.signup}>
+          <Text style={styles.signupText}>Already have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.linkText}> Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -106,28 +115,60 @@ export default function SignupScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#007AFF", // Blue background color
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  iconBackground: {
+    width: 70,
+    height: 70,
+    backgroundColor: "#ffffff5f",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff", // White text color
+  },
+  formContainer: {
+    backgroundColor: "#fff", // White background for form
+    width: "85%",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 20,
     fontWeight: "bold",
+    marginBottom: 20,
+    color: "#333", // Dark text color
   },
   input: {
-    width: "80%",
-    height: 40,
+    width: "100%",
+    height: 50,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     padding: 10,
     marginBottom: 15,
+    backgroundColor: "#F9F9F9", // White input field background
   },
   button: {
-    backgroundColor: "#007AFF",
-    width: "80%",
-    padding: 10,
+    backgroundColor: "#007AFF", // Blue button color
+    width: "100%",
+    padding: 15,
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 10,
@@ -135,14 +176,19 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
-  },
-  linkText: {
-    color: "#007AFF",
+    fontWeight: "bold",
   },
   signup: {
     marginTop: 10,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  signupText: {
+    color: "#333", // Dark text color for signup text
+  },
+  linkText: {
+    color: "#007AFF", // Blue link text color
+    fontWeight: "bold",
   },
 });

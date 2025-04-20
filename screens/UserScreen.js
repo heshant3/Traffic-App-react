@@ -89,9 +89,9 @@ const UserScreen = ({ route, navigation }) => {
     if (field === "name") {
       setEditedName(userData.name); // Reset to original name
     } else if (field === "email") {
-      setEditedPassword(userData.email); // Reset to original email
+      setEditedEmail(userData.email); // Reset to original email
     } else if (field === "password") {
-      setEditedPassword(userData.password); // Reset to original email
+      setEditedPassword(userData.password); // Reset to original password
     }
 
     setIsEditing((prev) => ({ ...prev, [field]: false }));
@@ -108,127 +108,140 @@ const UserScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.ImageContainer}>
-        <FontAwesome name="user-circle" size={100} color="#888" />
-      </View>
-      {userData ? (
-        <View style={styles.profileContainer}>
-          <View style={styles.textContainer}>
-            <View style={styles.editableRow}>
-              {isEditing.name ? (
-                <>
-                  <TextInput
-                    style={styles.input}
-                    value={editedName}
-                    onChangeText={setEditedName}
-                  />
-                  <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => handleSave("name")}
-                  >
-                    <AntDesign name="save" size={24} color="#007AFF" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => handleCancel("name")}
-                  >
-                    <MaterialIcons name="edit-off" size={24} color="#ff0000" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.text}>Name: {userData.name}</Text>
-                  <AntDesign
-                    name="edit"
-                    size={24}
-                    color="#007AFF"
-                    onPress={() =>
-                      setIsEditing((prev) => ({ ...prev, name: true }))
-                    }
-                  />
-                </>
-              )}
-            </View>
-
-            <View style={styles.editableRow}>
-              {isEditing.email ? (
-                <>
-                  <TextInput
-                    style={styles.input}
-                    value={editedEmail}
-                    onChangeText={setEditedEmail}
-                  />
-                  <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => handleSave("email")}
-                  >
-                    <AntDesign name="save" size={24} color="#007AFF" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => handleCancel("email")}
-                  >
-                    <MaterialIcons name="edit-off" size={24} color="#ff0000" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.text}>Email: {userData.email}</Text>
-                  <AntDesign
-                    name="edit"
-                    size={24}
-                    color="#007AFF"
-                    onPress={() =>
-                      setIsEditing((prev) => ({ ...prev, email: true }))
-                    }
-                  />
-                </>
-              )}
-            </View>
-
-            <View style={styles.editableRow}>
-              {isEditing.password ? (
-                <>
-                  <TextInput
-                    style={styles.input}
-                    value={editedPassword}
-                    onChangeText={setEditedPassword}
-                  />
-                  <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => handleSave("password")}
-                  >
-                    <AntDesign name="save" size={24} color="#007AFF" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => handleCancel("password")}
-                  >
-                    <MaterialIcons name="edit-off" size={24} color="#ff0000" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.text}>Password: {userData.password}</Text>
-                  <AntDesign
-                    name="edit"
-                    size={24}
-                    color="#007AFF"
-                    onPress={() =>
-                      setIsEditing((prev) => ({ ...prev, password: true }))
-                    }
-                  />
-                </>
-              )}
-            </View>
-          </View>
+      <View style={styles.header}>
+        <View style={styles.iconBackground}>
+          <FontAwesome name="user-circle" size={30} color="#ffffff" />
         </View>
-      ) : (
-        <Text>No user data available.</Text>
-      )}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Logout</Text>
-      </TouchableOpacity>
+        <Text style={styles.headerTitle}>My Profile</Text>
+      </View>
+      <View style={styles.profileContainer}>
+        {userData ? (
+          <>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Personal Information</Text>
+              <View style={styles.editableRow}>
+                {isEditing.name ? (
+                  <>
+                    <TextInput
+                      style={styles.input}
+                      value={editedName}
+                      onChangeText={setEditedName}
+                    />
+                    <TouchableOpacity
+                      style={styles.saveButton}
+                      onPress={() => handleSave("name")}
+                    >
+                      <Text style={styles.saveButtonText}>Save</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={() => handleCancel("name")}
+                    >
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.text}>Full Name: {userData.name}</Text>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() =>
+                        setIsEditing((prev) => ({ ...prev, name: true }))
+                      }
+                    >
+                      <Text style={styles.editButtonText}>Edit</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+
+              <View style={styles.editableRow}>
+                {isEditing.email ? (
+                  <>
+                    <TextInput
+                      style={styles.input}
+                      value={editedEmail}
+                      onChangeText={setEditedEmail}
+                    />
+                    <TouchableOpacity
+                      style={styles.saveButton}
+                      onPress={() => handleSave("email")}
+                    >
+                      <Text style={styles.saveButtonText}>Save</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={() => handleCancel("email")}
+                    >
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.text}>
+                      Email Address: {userData.email}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() =>
+                        setIsEditing((prev) => ({ ...prev, email: true }))
+                      }
+                    >
+                      <Text style={styles.editButtonText}>Edit</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+
+              <View style={styles.editableRow}>
+                {isEditing.password ? (
+                  <>
+                    <TextInput
+                      style={styles.input}
+                      value={editedPassword}
+                      onChangeText={setEditedPassword}
+                      secureTextEntry
+                      placeholder="Enter new password"
+                    />
+                    <TouchableOpacity
+                      style={styles.saveButton}
+                      onPress={() => handleSave("password")}
+                    >
+                      <Text style={styles.saveButtonText}>Save</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={() => handleCancel("password")}
+                    >
+                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.text}>Password: ******</Text>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() =>
+                        setIsEditing((prev) => ({ ...prev, password: true }))
+                      }
+                    >
+                      <Text style={styles.editButtonText}>Edit</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+            >
+              <Text style={styles.logoutButtonText}>Logout</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <Text style={styles.errorText}>No user data available.</Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -236,59 +249,122 @@ const UserScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
-    padding: 20,
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
     alignItems: "center",
-    paddingTop: 50,
   },
-  ImageContainer: {
+  header: {
     alignItems: "center",
-    marginBottom: 40,
-    marginTop: 20,
+    marginBottom: 20,
+  },
+  iconBackground: {
+    width: 70,
+    height: 70,
+    backgroundColor: "#ffffff5f",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: "#fff",
+    fontWeight: "bold",
   },
   profileContainer: {
-    flexDirection: "column",
+    backgroundColor: "#ffffff",
+    width: "85%",
+    borderRadius: 10,
+    padding: 20,
     alignItems: "center",
-    width: "100%",
-    marginBottom: 60,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  textContainer: {
+  card: {
     width: "100%",
-    alignItems: "flex-start",
-    marginTop: 40,
+    marginBottom: 20,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
   },
   editableRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 50,
+    marginBottom: 15,
   },
   text: {
-    fontSize: 22,
+    fontSize: 16,
     color: "#555",
+    flex: 1,
   },
   input: {
-    fontSize: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 10,
     flex: 1,
     marginRight: 10,
+    backgroundColor: "#F9F9F9",
   },
-  Button: {
-    marginLeft: 30,
+  editButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  editButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  saveButton: {
+    backgroundColor: "#28a745",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    backgroundColor: "#dc3545",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
   },
   logoutButton: {
     backgroundColor: "#007AFF",
-    paddingVertical: 10,
-    paddingHorizontal: 50,
+    width: "100%",
+    padding: 15,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
   },
   logoutButtonText: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  errorText: {
+    color: "#ff0000",
+    fontSize: 16,
     fontWeight: "bold",
   },
 });
