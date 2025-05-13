@@ -10,6 +10,8 @@ import ForecastScreen from "./screens/ForecastScreen";
 import UserScreen from "./screens/UserScreen";
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
+import IncidentScreen from "./screens/IncidentScreen";
+import NotificationHandler from "./components/NotificationHandler";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -28,6 +30,8 @@ function MainTabNavigator() {
             iconName = focused ? "cloud" : "cloud-outline";
           } else if (route.name === "User") {
             iconName = focused ? "person" : "person-outline";
+          } else if (route.name === "Incident") {
+            iconName = focused ? "warning" : "warning-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -42,6 +46,7 @@ function MainTabNavigator() {
     >
       <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Forecast" component={ForecastScreen} />
+      <Tab.Screen name="Incident" component={IncidentScreen} />
       <Tab.Screen name="User" component={UserScreen} />
     </Tab.Navigator>
   );
@@ -59,6 +64,7 @@ export default function App() {
         {/* Main Tabs after login */}
         <Stack.Screen name="Main" component={MainTabNavigator} />
       </Stack.Navigator>
+      <NotificationHandler />
     </NavigationContainer>
   );
 }
