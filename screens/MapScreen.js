@@ -6,6 +6,8 @@ import {
   Text,
   ActivityIndicator,
   alert,
+  Platform,
+  StatusBar,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
@@ -21,7 +23,7 @@ const MapScreen = ({ route }) => {
   const mapRef = useRef(null);
   const inputRef = useRef(null);
 
-  const GOOGLE_API_KEY = "AIzaSyBmayTJP8fXnkAiZdyCjV3kvPqiT3_T0_M";
+  const GOOGLE_API_KEY = "AIzaSyAsnMMAVhA_ADVwTfwVNZFJD2Ydt0Xi9gs";
 
   useEffect(() => {
     if (!location) {
@@ -137,10 +139,11 @@ const MapScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text>Loading map...</Text>
+          <Text style={styles.loadingText}>Loading map...</Text>
         </View>
       ) : (
         <>
@@ -150,25 +153,66 @@ const MapScreen = ({ route }) => {
               placeholder="Search for a location"
               onPress={onSearchSelect}
               fetchDetails={true}
-              query={{ key: GOOGLE_API_KEY, language: "en" }}
+              query={{
+                key: GOOGLE_API_KEY,
+                language: "en",
+                types: "geocode|establishment",
+              }}
               textInputProps={{
                 value: searchText,
                 onChangeText: (text) => setSearchText(text),
+                autoFocus: true,
               }}
               styles={{
                 textInput: styles.searchInput,
-                container: { flex: 1 },
-                listView: styles.searchResults,
+                container: {
+                  flex: 0,
+                  position: "absolute",
+                  width: "100%",
+                  zIndex: 1,
+                },
+                listView: {
+                  position: "absolute",
+                  top: 45,
+                  left: 0,
+                  right: 0,
+                  backgroundColor: "#fff",
+                  borderWidth: 1,
+                  borderColor: "#ddd",
+                  borderRadius: 15,
+                  zIndex: 1000,
+                  elevation: 5,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 5,
+                },
+                row: {
+                  backgroundColor: "#fff",
+                  padding: 15,
+                  height: 50,
+                  flexDirection: "row",
+                },
+                separator: {
+                  height: 0.5,
+                  backgroundColor: "#f0f0f0",
+                },
+                description: {
+                  fontSize: 16,
+                  color: "#333",
+                },
+                poweredContainer: {
+                  display: "none",
+                },
+              }}
+              enablePoweredByContainer={false}
+              minLength={2}
+              debounce={300}
+              nearbyPlacesAPI="GooglePlacesSearch"
+              GooglePlacesDetailsQuery={{
+                fields: "geometry",
               }}
             />
-            {searchText.length > 0 && (
-              <TouchableOpacity
-                style={styles.clearButton}
-                onPress={clearSearch}
-              >
-                <Ionicons name="close-circle" size={24} color="gray" />
-              </TouchableOpacity>
-            )}
           </View>
 
           <MapView
@@ -186,13 +230,18 @@ const MapScreen = ({ route }) => {
             }}
           >
             {searchLocation && (
-              <Marker coordinate={searchLocation} title="Selected Location" />
+              <Marker
+                coordinate={searchLocation}
+                title="Selected Location"
+                pinColor="#007AFF"
+              />
             )}
             {directions && (
               <Polyline
                 coordinates={directions}
-                strokeWidth={5}
-                strokeColor="blue"
+                strokeWidth={4}
+                strokeColor="#007AFF"
+                lineDashPattern={[1]}
               />
             )}
           </MapView>
@@ -228,59 +277,84 @@ const MapScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "flex-end", alignItems: "center" },
-  map: { ...StyleSheet.absoluteFillObject },
-  buttonContainer: { position: "absolute", bottom: 20, right: 20, zIndex: 1 },
+  container: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 30,
+    right: 20,
+    zIndex: 1,
+    gap: 15,
+  },
   locationButton: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 25,
-    marginBottom: 10,
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   directionButton: {
-    backgroundColor: "#3C80FF",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 25,
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  buttonText: {
+    color: "#007AFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
   searchContainer: {
     position: "absolute",
-    top: 40,
-    left: 10,
-    right: 10,
+    top: Platform.OS === "ios" ? 50 : 40,
+    left: 20,
+    right: 20,
     zIndex: 2,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingRight: 30,
+    borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
   },
   searchInput: {
-    top: 2,
-    flex: 1,
-    height: 40,
-    borderRadius: 10,
-    paddingHorizontal: 15,
+    height: 50,
+    borderRadius: 15,
+    paddingHorizontal: 20,
     fontSize: 16,
     backgroundColor: "#fff",
+    flex: 1,
+    color: "#333",
   },
-  searchResults: {
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#fff",
-    borderTopWidth: 0,
   },
-  clearButton: {
-    position: "absolute",
-    right: 10,
-    top: 9,
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#666",
+    fontWeight: "500",
   },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
 
 export default MapScreen;
